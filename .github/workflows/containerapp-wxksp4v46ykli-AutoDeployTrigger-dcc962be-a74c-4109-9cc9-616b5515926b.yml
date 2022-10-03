@@ -27,8 +27,8 @@ jobs:
       - name: Log in to container registry
         uses: docker/login-action@v1
         with:
-          username: ${{ secrets.secrets.GITHUB_USERNAME }}
-          password: ${{ secrets.secrets.GITHUB_PASSWORD }}
+          username: ${{ secrets.GITHUB_USERNAME }}
+          password: ${{ secrets.GITHUB_PASSWORD }}
 
   deploy:
     runs-on: ubuntu-latest
