@@ -27,18 +27,8 @@ jobs:
       - name: Log in to container registry
         uses: docker/login-action@v1
         with:
-          registry: shuanand.azurecr.io
-          username: ${{ secrets.CONTAINERAPPWXKSP4V46YKLI_REGISTRY_USERNAME }}
-          password: ${{ secrets.CONTAINERAPPWXKSP4V46YKLI_REGISTRY_PASSWORD }}
-
-      - name: Build and push container image to registry
-        uses: docker/build-push-action@v2
-        with:
-          push: true
-          tags: shuanand.azurecr.io/containerapp-wxksp4v46ykli:${{ github.sha }}
-          file: ./Dockerfile
-          context: ./
-
+          username: ${{ secrets.secrets.GITHUB_USERNAME }}
+          password: ${{ secrets.secrets.GITHUB_PASSWORD }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -56,5 +46,5 @@ jobs:
         with:
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
-            az containerapp registry set -n containerapp-wxksp4v46ykli -g AppService.L200.OSS.Nodejs.3 --server shuanand.azurecr.io --username  ${{ secrets.CONTAINERAPPWXKSP4V46YKLI_REGISTRY_USERNAME }} --password ${{ secrets.CONTAINERAPPWXKSP4V46YKLI_REGISTRY_PASSWORD }}
-            az containerapp update -n containerapp-wxksp4v46ykli -g AppService.L200.OSS.Nodejs.3 --image shuanand.azurecr.io/containerapp-wxksp4v46ykli:${{ github.sha }}
+            az containerapp registry set -n containerapp-wxksp4v46ykli -g AppService.L200.OSS.Nodejs.3 registry.hub.docker.com --username  ${{ secrets.GITHUB_USERNAME }} --password ${{ secrets.GITHUB_PASSWORD}}
+            az containerapp update -n containerapp-wxksp4v46ykli -g AppService.L200.OSS.Nodejs.3 --image mywishdotcf/fnapptest:v1.0.0
