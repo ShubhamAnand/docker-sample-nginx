@@ -22,33 +22,22 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Docker Buildx
-        id: buildx
         uses: docker/setup-buildx-action@v1
-        
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-         path: /tmp/.buildx-cache
-         key: ${{ runner.os }}-buildx-${{ github.sha }}
-         restore-keys: |
-           ${{ runner.os }}-buildx-       
 
       - name: Log in to container registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKER_USERNAME}}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: shuanand.azurecr.io
+          username: ${{ secrets.CONTAINERAPPWXKSP4V46YKLI_REGISTRY_USERNAME }}
+          password: ${{ secrets.CONTAINERAPPWXKSP4V46YKLI_REGISTRY_PASSWORD }}
 
       - name: Build and push container image to registry
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: registry.hub.docker.com/containerapp-wxksp4v46ykli:${{ github.sha }}
-          builder: ${{ steps.buildx.outputs.name }}
+          tags: shuanand.azurecr.io/containerapp-wxksp4v46ykli:${{ github.sha }}
           file: ./Dockerfile
           context: ./
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
 
 
   deploy:
@@ -67,5 +56,5 @@ jobs:
         with:
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
-            az containerapp registry set -n containerapp-wxksp4v46ykli -g AppService.L200.OSS.Nodejs.3 --server registry.hub.docker.com --username  ${{ secrets.CONTAINERAPPWXKSP4V46YKLI_REGISTRY_USERNAME }} --password ${{ secrets.CONTAINERAPPWXKSP4V46YKLI_REGISTRY_PASSWORD }}
-            az containerapp update -n containerapp-wxksp4v46ykli -g AppService.L200.OSS.Nodejs.3 --image registry.hub.docker.com/containerapp-wxksp4v46ykli:${{ github.sha }}
+            az containerapp registry set -n containerapp-wxksp4v46ykli -g AppService.L200.OSS.Nodejs.3 --server shuanand.azurecr.io --username  ${{ secrets.CONTAINERAPPWXKSP4V46YKLI_REGISTRY_USERNAME }} --password ${{ secrets.CONTAINERAPPWXKSP4V46YKLI_REGISTRY_PASSWORD }}
+            az containerapp update -n containerapp-wxksp4v46ykli -g AppService.L200.OSS.Nodejs.3 --image shuanand.azurecr.io/containerapp-wxksp4v46ykli:${{ github.sha }}
